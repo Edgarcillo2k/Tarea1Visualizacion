@@ -1,32 +1,68 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <input type="file" @change="readCSV">
+      <chart v-if="csv" :data="csv" />
     </div>
-    <router-view/>
-  </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import Vue from 'vue';
+import PieChart from "./components/PieChart.vue";
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+export default Vue.extend({
+    name: "app",
+    components: {
+        chart: PieChart
+    },
+    data(){
+        return {
+            csv: undefined as string[][]
+        }
+    },
+    methods: {
+        handler() {
+            var args = arguments;
+            for (var arg of args) {
+                if (arg instanceof Function) {
+                    arg();
+                }
+            }
+        },
+        parseCSV(text: string){
+            // Obtenemos las lineas del texto
+            let lines = text.replace(/\r/g, '').split('\n');
+            return lines.map(line => {
+                // Por cada linea obtenemos los valores
+                let values = line.split(';');
+                return values;
+            });
+        },
+        reverseMatrix(matrix: any[][]){
+            let output = [];
+            // Por cada fila
+            matrix.forEach((values, row) => {
+                // Vemos los valores y su posicion
+                values.forEach((value, col) => {
+                    // Si la posición aún no fue creada
+                    if (output[col] === undefined) 
+                        output[col] = [];
+                    output[col][row] = value;
+                });
+            });
+            return output;
+        },
+        readCSV(evt: any) {
+            let file = evt.target.files[0];
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                // Cuando el archivo se terminó de cargar
+                let lines = this.parseCSV(e.target.result);
+                let output = this.reverseMatrix(lines);
+                this.csv = output;
+            };
+            // Leemos el contenido del archivo seleccionado
+            reader.readAsBinaryString(file);
+        },
+    }
+});
+</script>
