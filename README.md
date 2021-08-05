@@ -7,18 +7,10 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm run serve, then run at localhost:8080
 ```
 
-### Compiles and minifies for production
+### Load dataset for charts
 ```
-npm run build
+Select the file src/assets/T1-Datos.csv when the app is running
 ```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
