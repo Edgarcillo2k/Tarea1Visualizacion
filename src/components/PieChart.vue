@@ -1,8 +1,9 @@
 <template>
   <div>
     <highcharts :options="pieChartOptions" ref="chart"></highcharts>
-    <highcharts :options="barChartOptions" ref="barChart"></highcharts>
+    <!--<highcharts :options="barChartOptions" ref="barChart"></highcharts>-->
     <highcharts :options="areaChartOptions" ref="areaChart"></highcharts>
+    <highcharts :options="areaChart2Options" ref="areaChart2"></highcharts>
   </div>
 </template>
 
@@ -78,13 +79,17 @@ export default Vue.extend({
                 elem[1][index+1] += elem[1][index];
             }
         });
-        this.areaChartOptions.xAxis.categories = sortedData.map(elem=>elem[0]);
-        this.areaChartOptions.series = Object.entries(countryYearHash).map(elem => {
+        const areaChartSeries = Object.entries(countryYearHash).map(elem => {
             return {
                 name: elem[0],
                 data: elem[1]
             }
         });
+        const areaChartCategories = sortedData.map(elem=>elem[0]);
+        this.areaChartOptions.xAxis.categories = areaChartCategories;
+        this.areaChartOptions.series = areaChartSeries;
+        this.areaChart2Options.xAxis.categories = areaChartCategories;
+        this.areaChart2Options.series = areaChartSeries;
         this.barChartOptions.series[0].data = males;
         this.barChartOptions.series[1].data = females;
     },
@@ -157,7 +162,49 @@ export default Vue.extend({
                     type: 'area'
                 },
                 title: {
-                    text: 'Records por paises a lo largo del tiempo'
+                    text: 'Records acumulados por paises a lo largo del tiempo'
+                },
+                subtitle: {
+                    text: null
+                },
+                xAxis: {
+                    categories: [],
+                    tickmarkPlacement: 'on',
+                    title: {
+                        enabled: false
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Records'
+                    },
+                },
+                tooltip: {
+                    split: true
+                },
+                plotOptions: {
+                    area: {
+                        stacking: 'normal',
+                        marker: {
+                            enabled: false,
+                            symbol: "circle",
+                            radius: 2,
+                            states: {
+                                hover: {
+                                    enabled: false
+                                }
+                            }
+                        }
+                    }
+                },
+                series: []
+            },
+            areaChart2Options: {
+                chart: {
+                    type: 'area'
+                },
+                title: {
+                    text: 'Records acumulados por paises a lo largo del tiempo'
                 },
                 subtitle: {
                     text: null
@@ -185,7 +232,7 @@ export default Vue.extend({
                             radius: 2,
                             states: {
                                 hover: {
-                                    enabled: true
+                                    enabled: false
                                 }
                             }
                         }
